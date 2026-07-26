@@ -2,14 +2,16 @@
 
 namespace Controllers\Checkout;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 
-class Checkout extends PublicController
+class Checkout extends PrivateController
 {
     public function run(): void
     {
         $viewData = array();
+
         if ($this->isPostBack()) {
+
             $PayPalOrder = new \Utilities\Paypal\PayPalOrder(
                 "test" . (time() - 10000000),
                 "http://localhost:8080/mvc202402/index.php?page=Checkout_Error",
@@ -23,15 +25,19 @@ class Checkout extends PublicController
                 \Utilities\Context::getContextByKey("PAYPAL_CLIENT_ID"),
                 \Utilities\Context::getContextByKey("PAYPAL_CLIENT_SECRET")
             );
+
             $PayPalRestApi->getAccessToken();
+
             $response = $PayPalRestApi->createOrder($PayPalOrder);
 
             $_SESSION["orderid"] = $response->id;
+
             foreach ($response->links as $link) {
                 if ($link->rel == "approve") {
                     \Utilities\Site::redirectTo($link->href);
                 }
             }
+
             die();
         }
 

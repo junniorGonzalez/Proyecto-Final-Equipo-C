@@ -1,5 +1,7 @@
 <?php
+
 namespace Controllers\Sec;
+
 class Login extends \Controllers\PublicController
 {
     private $txtEmail = "";
@@ -9,53 +11,54 @@ class Login extends \Controllers\PublicController
     private $generalError = "";
     private $hasError = false;
 
-    public function run() :void
+    public function run(): void
     {
         if ($this->isPostBack()) {
-            $this->txtEmail = $_POST["txtEmail"];
+
+            $this->txtEmail = trim($_POST["txtEmail"]);
             $this->txtPswd = $_POST["txtPswd"];
 
             if (!\Utilities\Validators::IsValidEmail($this->txtEmail)) {
-                $this->errorEmail = "¡Correo no tiene el formato adecuado!";
+                $this->errorEmail = "El correo no tiene un formato válido.";
                 $this->hasError = true;
             }
+
             if (\Utilities\Validators::IsEmpty($this->txtPswd)) {
-                $this->errorPswd = "¡Debe ingresar una contraseña!";
+                $this->errorPswd = "Debe ingresar una contraseña.";
                 $this->hasError = true;
             }
-            if (! $this->hasError) {
-                if ($dbUser = \Dao\Security\Security::getUsuarioByEmail($this->txtEmail)) {
-                    if ($dbUser["userest"] != \Dao\Security\Estados::ACTIVO) {
-                        $this->generalError = "¡Credenciales son incorrectas!";
+
+            if (!$this->hasError) {
+
+                $dbUser = \Dao\Security\Security::getUsuarioByEmail($this->txtEmail);
+
+                if ($dbUser) {
+
+                    if ($dbUser["estado"] != "Activo") {
+                        $this->generalError = "La cuenta está inactiva.";
                         $this->hasError = true;
-                        error_log(
-                            sprintf(
-                                "ERROR: %d %s tiene cuenta con estado %s",
-                                $dbUser["usercod"],
-                                $dbUser["useremail"],
-                                $dbUser["userest"]
-                            )
-                        );
                     }
-                    if (!\Dao\Security\Security::verifyPassword($this->txtPswd, $dbUser["userpswd"])) {
-                        $this->generalError = "¡Credenciales son incorrectas!";
+
+                    if (
+                        !$this->hasError &&
+                        !\Dao\Security\Security::verifyPassword(
+                            $this->txtPswd,
+                            $dbUser["password"]
+                        )
+                    ) {
+                        $this->generalError = "Correo o contraseña incorrectos.";
                         $this->hasError = true;
-                        error_log(
-                            sprintf(
-                                "ERROR: %d %s contraseña incorrecta",
-                                $dbUser["usercod"],
-                                $dbUser["useremail"]
-                            )
-                        );
-                        // Aqui se debe establecer acciones segun la politica de la institucion.
                     }
-                    if (! $this->hasError) {
+
+                    if (!$this->hasError) {
+
                         \Utilities\Security::login(
-                            $dbUser["usercod"],
-                            $dbUser["username"],
-                            $dbUser["useremail"]
+                            $dbUser["id_usuario"],
+                            $dbUser["nombre"],
+                            $dbUser["correo"]
                         );
-                        if (\Utilities\Context::getContextByKey("redirto") !== "") {
+
+                        if (\Utilities\Context::getContextByKey("redirto") != "") {
                             \Utilities\Site::redirectTo(
                                 \Utilities\Context::getContextByKey("redirto")
                             );
@@ -63,19 +66,15 @@ class Login extends \Controllers\PublicController
                             \Utilities\Site::redirectTo("index.php");
                         }
                     }
+
                 } else {
-                    error_log(
-                        sprintf(
-                            "ERROR: %s trato de ingresar",
-                            $this->txtEmail
-                        )
-                    );
-                    $this->generalError = "¡Credenciales son incorrectas!";
+                    $this->generalError = "Correo o contraseña incorrectos.";
                 }
             }
         }
-        $dataView = get_object_vars($this);
-        \Views\Renderer::render("security/login", $dataView);
+
+        $viewData = get_object_vars($this);
+
+        \Views\Renderer::render("security/login", $viewData);
     }
 }
-?>

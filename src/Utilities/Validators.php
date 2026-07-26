@@ -11,7 +11,7 @@ class Validators {
 
     static public function IsValidEmail($valor)
     {
-        return preg_match("/^([a-z0-9_\.-]+\@[\da-z\.-]+\.[a-z\.]{2,6})$/", $valor) && true;
+        return filter_var($valor, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     static public function IsValidPassword($valor){

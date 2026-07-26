@@ -47,50 +47,77 @@ class Security extends \Dao\Table
         return self::obtenerRegistros($sqlstr, array());
     }
 
-    static public function newUsuario($email, $password)
+   static public function newUsuario(
+    $nombre,
+    $apellido,
+    $correo,
+    $telefono,
+    $direccion,
+    $password)
     {
-        if (!\Utilities\Validators::IsValidEmail($email)) {
-            throw new Exception("Correo no es válido");
+        if (!\Utilities\Validators::IsValidEmail($correo)) {
+            throw new Exception("Correo inválido");
         }
+
         if (!\Utilities\Validators::IsValidPassword($password)) {
-            throw new Exception("Contraseña debe ser almenos 8 caracteres, 1 número, 1 mayúscula, 1 símbolo especial");
+            throw new Exception("Contraseña inválida");
         }
 
-        $newUser = self::_usuarioStruct();
-        //Tratamiento de la Contraseña
-        $hashedPassword = self::_hashPassword($password);
+        if (self::getUsuarioByEmail($correo)) {
+            throw new Exception("El correo ya está registrado.");
+        }
 
-        unset($newUser["usercod"]);
-        unset($newUser["userfching"]);
-        unset($newUser["userpswdchg"]);
+        $sql = "INSERT INTO usuarios
+                (
+                    id_rol,
+                    nombre,
+                    apellido,
+                    correo,
+                    password,
+                    telefono,
+                    direccion,
+                    estado
+                )
+                VALUES
+                (
+                    :id_rol,
+                    :nombre,
+                    :apellido,
+                    :correo,
+                    :password,
+                    :telefono,
+                    :direccion,
+                    :estado
+                );";
 
-        $newUser["useremail"] = $email;
-        $newUser["username"] = "John Doe";
-        $newUser["userpswd"] = $hashedPassword;
-        $newUser["userpswdest"] = Estados::ACTIVO;
-        $newUser["userpswdexp"] = date('Y-m-d', time() + 7776000);  //(3*30*24*60*60) (m d h mi s)
-        $newUser["userest"] = Estados::ACTIVO;
-        $newUser["useractcod"] = hash("sha256", $email.time());
-        $newUser["usertipo"] = UsuarioTipo::PUBLICO;
-
-        $sqlIns = "INSERT INTO `usuario` (`useremail`, `username`, `userpswd`,
-            `userfching`, `userpswdest`, `userpswdexp`, `userest`, `useractcod`,
-            `userpswdchg`, `usertipo`)
-            VALUES
-            ( :useremail, :username, :userpswd,
-            now(), :userpswdest, :userpswdexp, :userest, :useractcod,
-            now(), :usertipo);";
-
-        return self::executeNonQuery($sqlIns, $newUser);
-
+        return self::executeNonQuery(
+            $sql,
+            array(
+                "id_rol" => 2,
+                "nombre" => $nombre,
+                "apellido" => $apellido,
+                "correo" => $correo,
+                "password" => password_hash($password, PASSWORD_BCRYPT),
+                "telefono" => $telefono,
+                "direccion" => $direccion,
+                "estado" => "Activo"
+            )
+        );
     }
 
-    static public function getUsuarioByEmail($email)
+    static public function getUsuarioByEmail($correo)
     {
-        $sqlstr = "SELECT * from `usuario` where `useremail` = :useremail ;";
-        $params = array("useremail"=>$email);
+        $sql = "SELECT *
+                FROM usuarios
+                WHERE correo = :correo
+                LIMIT 1;";
 
-        return self::obtenerUnRegistro($sqlstr, $params);
+        return self::obtenerUnRegistro(
+            $sql,
+            array(
+                "correo" => $correo
+            )
+        );
     }
 
     static private function _saltPassword($password)
@@ -107,12 +134,9 @@ class Security extends \Dao\Table
         return password_hash(self::_saltPassword($password), PASSWORD_ALGORITHM);
     }
 
-    static public function verifyPassword($raw_password, $hash_password)
+   static public function verifyPassword($raw_password, $hash_password)
     {
-        return password_verify(
-            self::_saltPassword($raw_password),
-            $hash_password
-        );
+        return password_verify($raw_password, $hash_password);
     }
 
 
