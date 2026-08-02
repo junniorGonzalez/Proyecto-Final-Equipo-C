@@ -1,4 +1,3 @@
-
 <section class="grid" style="display: flex; flex-wrap: wrap; justify-content: center;">
   <div class="col-12" style="text-align: center; margin-bottom: 2rem;">
     <h1>{{titulo}}</h1>
@@ -17,7 +16,15 @@
       <p><strong>Categoría:</strong> {{prdcategoria}}</p>
       <p><strong>Descripcion:</strong> {{descripcion}}</p>
       <p><strong>Precio:</strong> L. {{prdcosto}}</p>
-      <a href="index.php?page=Checkout_Checkout" style="display:inline-block; margin-top:0.5rem; background:#ff6b6b; color:white; padding:0.6rem 1rem; border-radius:6px; text-decoration:none; font-weight: bold;">Agregar</a>
+
+      <!-- Formulario para enviar el ID del producto a la carretilla -->
+      <form action="index.php?page=Checkout_Checkout" method="post" style="margin-top: 0.5rem;">
+        <input type="hidden" name="prdcod" value="{{prdcod}}" />
+        <input type="hidden" name="action" value="ADD" />
+        <button type="submit" style="background:#ff6b6b; color:white; padding:0.6rem 1.2rem; border-radius:6px; border:none; font-weight: bold; cursor: pointer; width: 100%;">
+          Agregar
+        </button>
+      </form>
     </article>
   </div>
   {{endfor productos}}

@@ -30,6 +30,10 @@
         {{foreach PUBLIC_NAVIGATION}}
             <li><a href="{{nav_url}}">{{nav_label}}</a></li>
         {{endfor PUBLIC_NAVIGATION}}
+        
+        <!-- Accesos de Administración -->
+        <li><a href="index.php?page=Admin_Productos"><i class="fas fa-boxes"></i>&nbsp;Productos</a></li>
+        <li><a href="index.php?page=Admin_Categorias"><i class="fas fa-tags"></i>&nbsp;Categorías</a></li>
       </ul>
     </nav>
   </header>
