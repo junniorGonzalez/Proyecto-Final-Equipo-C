@@ -3,10 +3,9 @@
 namespace Controllers\admin;
 
 use Controllers\PrivateController;
-use Controllers\PublicController;
 use Views\Renderer;
 
-class Pedidos extends PublicController
+class Pedidos extends PrivateController
 {
     public function run(): void
     {
