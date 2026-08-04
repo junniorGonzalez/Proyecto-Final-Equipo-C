@@ -9,70 +9,74 @@ use Utilities\Site;
 
 class CategoriaForm extends PublicController
 {
-    private $mode = "INS";
-    private $modeDescriptions = array(
-        "INS" => "Agregar Nueva Categoría",
-        "UPD" => "Editar Categoría",
-        "DEL" => "Eliminar Categoría"
-    );
-
     public function run(): void
     {
-        $viewData = array(
+        $mode = $_GET["mode"] ?? "INS";
+
+        $viewData = [
+            "mode" => $mode,
+            "mode_desc" => "Nueva Categoría",
             "catcod" => 0,
             "catdsc" => "",
-            "catest" => "ACT",
-            "readonly" => ""
-        );
+            "catest" => "Activo",
+            "readonly" => "",
+            "selACT" => "selected",
+            "selINA" => ""
+        ];
 
-        if (isset($_GET["mode"])) {
-            $this->mode = $_GET["mode"];
+        switch ($mode) {
+            case "UPD":
+                $viewData["mode_desc"] = "Editar Categoría";
+                break;
+
+            case "INS":
+                $viewData["mode_desc"] = "Agregar Categoría";
+                break;
         }
 
         if (isset($_GET["catcod"])) {
-            $viewData["catcod"] = intval($_GET["catcod"]);
-            $tmpData = DaoCategorias::getById($viewData["catcod"]);
-            if ($tmpData) {
-                $viewData = array_merge($viewData, $tmpData);
+
+            $categoria = DaoCategorias::getById((int)$_GET["catcod"]);
+
+            if ($categoria) {
+
+                $viewData["catcod"] = $categoria["catcod"];
+                $viewData["catdsc"] = $categoria["catdsc"];
+                $viewData["catest"] = $categoria["catest"];
+
+                if (strtoupper($categoria["catest"]) == "INACTIVO") {
+                    $viewData["selACT"] = "";
+                    $viewData["selINA"] = "selected";
+                }
             }
         }
 
         if ($this->isPostBack()) {
-            $this->handlePost($viewData);
-        }
 
-        $viewData["mode"] = $this->mode;
-        $viewData["mode_desc"] = $this->modeDescriptions[$this->mode] ?? "Gestionar Categoría";
+            $mode = $_POST["mode"];
+            $catcod = intval($_POST["catcod"]);
+            $catdsc = trim($_POST["catdsc"]);
+            $catest = $_POST["catest"];
 
-        if ($this->mode === "DEL") {
-            $viewData["readonly"] = "disabled";
-        } else {
-            $viewData["readonly"] = "";
+            if ($mode == "INS") {
+
+                DaoCategorias::insert(
+                    $catdsc,
+                    $catest
+                );
+
+            } elseif ($mode == "UPD") {
+
+                DaoCategorias::update(
+                    $catcod,
+                    $catdsc,
+                    $catest
+                );
+            }
+
+            Site::redirectTo("index.php?page=Admin_Categorias");
         }
 
         Renderer::render("admin/categoria_form", $viewData);
-    }
-
-    private function handlePost(&$viewData)
-    {
-        $mode = $_POST["mode"] ?? "INS";
-        $catcod = intval($_POST["catcod"] ?? 0);
-        // Lee catdsc o catnom por si la vista envía cualquiera de los dos
-        $catdsc = $_POST["catdsc"] ?? $_POST["catnom"] ?? "";
-        $catest = $_POST["catest"] ?? "ACT";
-
-        switch ($mode) {
-            case "INS":
-                DaoCategorias::insert($catdsc, $catest);
-                break;
-            case "UPD":
-                DaoCategorias::update($catcod, $catdsc, $catest);
-                break;
-            case "DEL":
-                DaoCategorias::delete($catcod);
-                break;
-        }
-
-        Site::redirectTo("index.php?page=Admin_Categorias");
     }
 }

@@ -105,3 +105,27 @@ VALUES(
     'admin@laneverita.com',
     '$2y$10$nbtukNBuF79R9AXG/EZ09et6COXMJIwjlgd7ZP6ztqTZa0lP9ftIK'
 );
+
+INSERT INTO productos
+(id_categoria,nombre,descripcion,precio,stock,imagen,estado)
+VALUES
+(1,'Chocobanano','Bananos cubiertos de chocolate con chispitas de colores y leche condensada',15,50,'public/imgs/Chocobananos.jpeg','Disponible'),
+(2,'Flan','Producto creado a base de leche, con sabor a vainilla, con caramelo',25,40,'public/imgs/Flan.jpeg','Disponible'),
+(2,'Gelaflan','Postre combinado entre gelatina y flan',25,60,'public/imgs/Gelaflan.jpeg','Disponible'),
+(2,'Gelatina de chicle','Postre ligero a base de agua con sabor a chicle',20,30,'public/imgs/Gelatinachicle.jpeg','Disponible'),
+(2,'Gelatina con frutas','Postre creado a base de gelatina y frutas con topping de leche condensada y granola',45,60,'public/imgs/Gelatinaconfrutas.jpeg','Disponible'),
+(2,'Gelatina de Fresa','Postre ligero a base de agua con sabor a fresa',20,60,'public/imgs/Gelatinafresa.jpeg','Disponible'),
+(2,'Gelatina de Mosaico','Postre combinado entre gelatina de fresa y gelatina tres leches con fresa natural',45,60,'public/imgs/GelatinaMosaico.jpeg','Disponible'),
+(2,'Gelatina de Naranja','Postre ligero a base de agua con sabor a naranja',20,60,'public/imgs/Gelatinanaranja.jpeg','Disponible'),
+(2,'Gelatina de Piña','Postre ligero a base de agua con sabor a piña',20,60,'public/imgs/GelatinaPina.jpeg','Disponible'),
+(2,'Gelatina de Uva','Postre ligero a base de agua con sabor a uva',20,60,'public/imgs/GelatinaUva.jpeg','Disponible'),
+(3,'Granizado de Café','Elaborado a base de café con leche y chocolate',85,60,'public/imgs/Granizadodecafe.jpeg','Disponible'),
+(3,'Granizado de Fresa','Elaborado con fresas naturales y un toque de Hershey de fresa',80,60,'public/imgs/Granizadodefresa.jpeg','Disponible'),
+(3,'Granizado de Maracuyá','Elaborado con pulpa natural de maracuyá y leche condensada',80,60,'public/imgs/Granizadodemaracuya.jpeg','Disponible'),
+(3,'Granizado de Nance','Elaborado con pulpa natural de nance y leche condensada',80,60,'public/imgs/Granizadodenance.jpeg','Disponible'),
+(3,'Mangonada con Gomitas','Elaborada con mango natural, tajín, chamoy y gomitas',110,60,'public/imgs/Mangonadacongomitas.jpeg','Disponible'),
+(4,'Piña Loca','Piña rellena con frutas, tajín, chamoy, gomitas y banderilla',160,60,'public/imgs/Pinaloca.jpeg','Disponible'),
+(4,'Sandía Loca','Sandía preparada con frutas, tajín, chamoy y gomitas',200,60,'public/imgs/Sandialoca.jpeg','Disponible'),
+(4,'Tutti Frutti','Mezcla de frutas naturales con jugo de ponche',50,60,'public/imgs/TuttiFrutti.jpeg','Disponible'),
+(1,'Paleta de Frutas','Paleta elaborada con variedades de frutas',15,60,'public/imgs/Paletadefrutas.jpeg','Disponible'),
+(1,'Paleta de Coco','Paleta de coco elaborada a base de leche',12,60,'public/imgs/Paletadecoco.png','Disponible');
