@@ -112,19 +112,16 @@
             </button>
 
             <a href="index.php?page=Checkout_Pago"
-   style="
-      display:inline-block;
-      margin-left:15px;
-      background:#007bff;
-      color:#fff;
-      padding:12px 24px;
-      border-radius:8px;
-      text-decoration:none;
-      font-weight:bold;">
-
-    Finalizar compra
-
-</a>
+           style="display:inline-block;
+                  margin-left:15px;
+                  background:#007bff;
+                  color:#fff;
+                  padding:12px 24px;
+                  border-radius:8px;
+                  text-decoration:none;
+                  font-weight:bold;">
+            Finalizar compra
+        </a>
 
         </form>
 

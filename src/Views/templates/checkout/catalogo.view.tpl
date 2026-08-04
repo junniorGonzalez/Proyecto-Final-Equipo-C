@@ -22,6 +22,19 @@
             🛒 Ir al carrito
         </a>
 
+        <a href="index.php?page=Checkout_Historial"
+           style="display:inline-block;
+                  margin-top:15px;
+                  margin-left:10px;
+                  background:#007bff;
+                  color:white;
+                  padding:12px 24px;
+                  border-radius:6px;
+                  text-decoration:none;
+                  font-weight:bold;">
+            📋 Ver historial
+        </a>
+
     </div>
 
     {{foreach productos}}
