@@ -125,17 +125,33 @@
                         </a>
 
                         <form action="index.php?page=Admin_Categorias"
-      method="post"
-      style="margin:0;">
+                              method="post"
+                              style="margin:0;">
 
-    <input type="hidden"
-           name="action"
-           value="DELETE">
+                            <input type="hidden"
+                                   name="action"
+                                   value="DELETE">
 
-    <input type="hidden"
-           name="catcod"
-           value="{{catcod}}">
+                            <input type="hidden"
+                                   name="catcod"
+                                   value="{{catcod}}">
 
+                            <button type="submit"
+                                    style="
+                                        width:120px;
+                                        background:#F8B8CF;
+                                        color:#304A97;
+                                        padding:10px;
+                                        border:none;
+                                        border-radius:8px;
+                                        cursor:pointer;
+                                        font-weight:bold;">
+
+                                Eliminar
+
+                            </button>
+
+                        </form>
 
                     </div>
 

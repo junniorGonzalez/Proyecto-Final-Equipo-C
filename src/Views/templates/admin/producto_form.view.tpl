@@ -11,10 +11,15 @@
       <input type="text" name="prddsc" value="{{prddsc}}" {{readonly}} required placeholder="Ej. Helado de Fresa" style="width:100%; padding:0.6rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; background-color: #fff;" />
     </div>
 
-    <!-- Campo de Categoría como texto manual -->
+    <!-- Campo de Categoría como selección de categorías existentes -->
     <div style="margin-bottom: 1.2rem;">
       <label style="display:block; font-weight:bold; margin-bottom:0.4rem; color:#555;">Categoría:</label>
-      <input type="text" name="prdcategoria" value="{{prdcategoria}}" {{readonly}} required placeholder="Ej. Helados, Gelatinas, Repostería..." style="width:100%; padding:0.6rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; background-color: #fff;" />
+      <select name="prdcategoria" {{readonly}} required style="width:100%; padding:0.6rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; background-color: #fff;">
+        <option value="">Seleccione una categoría</option>
+        {{foreach categorias}}
+          <option value="{{catcod}}" {{if selected}}selected{{endif selected}}>{{catdsc}}</option>
+        {{endfor categorias}}
+      </select>
     </div>
 
     <div style="margin-bottom: 1.2rem;">
@@ -31,7 +36,7 @@
       <label style="display:block; font-weight:bold; margin-bottom:0.4rem; color:#555;">Estado:</label>
       <select name="prdest" {{readonly}} style="width:100%; padding:0.6rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; background-color: #fff;">
         <option value="Disponible">Disponible</option>
-        <option value="Agotado">Agotado</option>
+        <option value="No disponible">No disponible</option>
       </select>
     </div>
 

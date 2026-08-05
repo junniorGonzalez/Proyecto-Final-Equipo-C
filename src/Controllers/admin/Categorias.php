@@ -5,6 +5,7 @@ namespace Controllers\Admin;
 use Controllers\PublicController;
 use Views\Renderer;
 use Dao\Categorias as DaoCategorias;
+use Dao\Productos as DaoProductos;
 use Utilities\Site;
 
 class Categorias extends PublicController
@@ -19,6 +20,12 @@ class Categorias extends PublicController
             if ($action == "DELETE") {
 
                 $catcod = intval($_POST["catcod"] ?? 0);
+
+                $cantidadProductos = DaoProductos::countByCategoria($catcod);
+
+                if ($cantidadProductos > 0) {
+                    Site::redirectToWithMsg("index.php?page=Admin_Categorias", "No puede eliminar la categoría porque tiene productos asociados.");
+                }
 
                 DaoCategorias::delete($catcod);
 

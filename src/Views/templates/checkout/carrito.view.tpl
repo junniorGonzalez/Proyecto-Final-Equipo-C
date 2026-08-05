@@ -1,4 +1,4 @@
-<section class="grid" style="background:#F8FCFF;padding:40px 20px;display:flex;flex-direction:column;align-items:center;">
+<section id="carrito" class="grid" style="background:#F8FCFF;padding:40px 20px;display:flex;flex-direction:column;align-items:center;">
 
 {{if carrito}}
 
@@ -28,7 +28,7 @@
 
 {{foreach carrito}}
 
-<div style="background:#ffffff;
+<div id="cart-{{prdcod}}" style="background:#ffffff;
             border:2px solid #F8B8CF;
             border-radius:16px;
             width:300px;

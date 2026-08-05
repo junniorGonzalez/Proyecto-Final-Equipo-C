@@ -43,52 +43,45 @@
 
             <div style="margin-bottom:20px;">
 
-                <label style="font-weight:bold;color:#304A97;">
+                <label style="font-weight:bold;color:#304A97;display:block;">
                     Nombre de la Categoría
                 </label>
 
-                <input
-                    type="text"
-                    name="catdsc"
-                    value="{{catdsc}}"
-                    {{readonly}}
-                    required
-                    style="
-                        width:100%;
-                        margin-top:8px;
-                        padding:12px;
-                        border:1px solid #ccc;
-                        border-radius:8px;
-                        box-sizing:border-box;">
+                <div style="margin-top:8px;">
+                    <input
+                        type="text"
+                        name="catdsc"
+                        value="{{catdsc}}"
+                        required
+                        placeholder="Escribe el nombre de la categoría"
+                        style="
+                            display:block;
+                            width:100%;
+                            padding:12px;
+                            border:1px solid #ccc;
+                            border-radius:8px;
+                            box-sizing:border-box;">
+                </div>
 
             </div>
 
 
             <div style="margin-bottom:30px;">
 
-                <label style="font-weight:bold;color:#304A97;">
+                <label style="font-weight:bold;color:#304A97;display:block;">
                     Estado
                 </label>
 
-                <select
-                    name="catest"
-                    {{readonly}}
-                    style="
-                        width:100%;
-                        margin-top:8px;
-                        padding:12px;
-                        border:1px solid #ccc;
-                        border-radius:8px;">
-
-                    <option value="Activo" {{selACT}}>
+                <div style="margin-top:8px; display:flex; gap:20px; align-items:center;">
+                    <label style="display:flex; align-items:center; gap:8px; font-weight:normal; color:#333;">
+                        <input type="radio" name="catest" value="Activo" {{selACT}}>
                         Activo
-                    </option>
-
-                    <option value="Inactivo" {{selINA}}>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-weight:normal; color:#333;">
+                        <input type="radio" name="catest" value="Inactivo" {{selINA}}>
                         Inactivo
-                    </option>
-
-                </select>
+                    </label>
+                </div>
 
             </div>
 

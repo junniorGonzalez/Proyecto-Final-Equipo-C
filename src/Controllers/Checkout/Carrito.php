@@ -27,6 +27,10 @@ class Carrito extends PublicController
 
                 if ($producto) {
 
+                    if ($producto["prdest"] === "No disponible") {
+                        Site::redirectTo("index.php?page=Checkout_Catalogo#prod-" . $prdcod);
+                    }
+
                     if (isset($_SESSION["cart"][$prdcod])) {
 
                         $_SESSION["cart"][$prdcod]["cantidad"]++;
@@ -39,7 +43,7 @@ class Carrito extends PublicController
                     }
                 }
 
-                Site::redirectTo("index.php?page=Checkout_Catalogo");
+                Site::redirectTo("index.php?page=Checkout_Catalogo#prod-" . $prdcod);
             }
 
             if ($accion == "PLUS") {
@@ -51,7 +55,7 @@ class Carrito extends PublicController
                     $_SESSION["cart"][$prdcod]["cantidad"]++;
                 }
 
-                Site::redirectTo("index.php?page=Checkout_Carrito");
+                Site::redirectTo("index.php?page=Checkout_Carrito#cart-" . $prdcod);
             }
 
             if ($accion == "MINUS") {
@@ -68,7 +72,7 @@ class Carrito extends PublicController
                     }
                 }
 
-                Site::redirectTo("index.php?page=Checkout_Carrito");
+                Site::redirectTo("index.php?page=Checkout_Carrito#cart-" . $prdcod);
             }
 
             if ($accion == "DELETE") {
@@ -80,15 +84,20 @@ class Carrito extends PublicController
                     unset($_SESSION["cart"][$prdcod]);
                 }
 
-                Site::redirectTo("index.php?page=Checkout_Carrito");
+                Site::redirectTo("index.php?page=Checkout_Carrito#carrito");
             }
+        }
 
-            if ($accion == "CLEAR") {
-
-    $_SESSION["cart"] = [];
-
-    Site::redirectTo("index.php?page=Checkout_Carrito");
-}
+        foreach ($_SESSION["cart"] as $prdcod => $producto) {
+            $currentProduct = Productos::getById(intval($prdcod));
+            if (!$currentProduct || $currentProduct["prdest"] === "No disponible") {
+                unset($_SESSION["cart"][$prdcod]);
+                continue;
+            }
+            // Keep cart values in sync with current product state
+            $_SESSION["cart"][$prdcod] = array_merge($currentProduct, [
+                "cantidad" => $producto["cantidad"]
+            ]);
         }
 
         $total = 0;

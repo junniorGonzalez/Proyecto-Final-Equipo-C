@@ -5,6 +5,7 @@ namespace Controllers\Admin;
 use Controllers\PublicController;
 use Views\Renderer;
 use Dao\Categorias as DaoCategorias;
+use Dao\Productos as DaoProductos;
 use Utilities\Site;
 
 class CategoriaForm extends PublicController
@@ -72,6 +73,12 @@ class CategoriaForm extends PublicController
                     $catdsc,
                     $catest
                 );
+
+                if (strtoupper(trim($catest)) === "INACTIVO") {
+                    DaoProductos::updateStatusByCategoria($catcod, "No disponible");
+                } elseif (strtoupper(trim($catest)) === "ACTIVO") {
+                    DaoProductos::updateStatusByCategoria($catcod, "Disponible");
+                }
             }
 
             Site::redirectTo("index.php?page=Admin_Categorias");

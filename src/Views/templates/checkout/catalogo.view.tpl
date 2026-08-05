@@ -1,4 +1,4 @@
-<section class="grid" style="background:#F8FCFF;padding:40px 20px;">
+<section id="catalogo" class="grid" style="background:#F8FCFF;padding:40px 20px;">
 
     <div class="col-12" style="text-align:center;margin-bottom:50px;">
 
@@ -63,7 +63,7 @@
 
         {{foreach productos}}
 
-        <div class="col-12 col-s-6 col-m-4"
+        <div id="prod-{{prdcod}}" class="col-12 col-s-6 col-m-4"
              style="display:flex;justify-content:center;">
 
             <article style="background:#ffffff;

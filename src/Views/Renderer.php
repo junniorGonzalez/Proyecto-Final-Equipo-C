@@ -74,13 +74,10 @@ class Renderer
                 if(strpos($htmlContent, "{{include")){
                     $htmlContent = self::loadPartials($htmlContent);
                 }
-                //Limpiar Saltos de Pagina
-                if (strpos($htmlContent, "<pre>")) {
-                } else {
-                    $htmlContent = str_replace("\n", "", $htmlContent);
-                    $htmlContent = str_replace("\r", "", $htmlContent);
-                    $htmlContent = str_replace("\t", "", $htmlContent);
-                    $htmlContent = str_replace("  ", "", $htmlContent);
+                //Limpiar saltos de página sin eliminar espacios importantes entre atributos
+                if (strpos($htmlContent, "<pre>") === false) {
+                    $htmlContent = preg_replace('/[ \t\r\n]+/', ' ', $htmlContent);
+                    $htmlContent = trim($htmlContent);
                 }
                 //obtiene un arreglo separando lo distintos tipos de nodos
                 $template_code = self::_parseTemplate($htmlContent);

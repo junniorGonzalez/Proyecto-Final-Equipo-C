@@ -5,6 +5,7 @@ namespace Controllers\Admin;
 use Controllers\PublicController;
 use Views\Renderer;
 use Dao\Productos as DaoProductos;
+use Dao\Categorias as DaoCategorias;
 
 class ProductoForm extends PublicController
 {
@@ -23,10 +24,11 @@ class ProductoForm extends PublicController
             "prdcosto" => 0,
             "prdimg" => "",
             "prdest" => "Disponible",
-            "prdcategoria" => "",
+            "prdcategoria" => 0,
             "descripcion" => "",
             "stock" => 0,
-            "readonly" => ""
+            "readonly" => "",
+            "categorias" => []
         );
 
         if (isset($_GET["mode"])) {
@@ -44,6 +46,12 @@ class ProductoForm extends PublicController
         if ($this->isPostBack()) {
             $this->handlePost($viewData);
         }
+
+        $viewData["categorias"] = DaoCategorias::getAll();
+        foreach ($viewData["categorias"] as &$categoria) {
+            $categoria["selected"] = intval($categoria["catcod"]) === intval($viewData["prdcategoria"]);
+        }
+        unset($categoria);
 
         $viewData["mode"] = $this->mode;
         $viewData["mode_desc"] = $this->modeDescriptions[$this->mode] ?? "Gestionar Producto";
@@ -90,9 +98,6 @@ class ProductoForm extends PublicController
                 break;
         }
 
-        \Utilities\Site::redirectToWithMsg(
-            "index.php?page=Admin_Productos",
-            "Operación realizada exitosamente."
-        );
+        \Utilities\Site::redirectTo("index.php?page=Admin_Productos");
     }
 }
