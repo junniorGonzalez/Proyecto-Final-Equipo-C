@@ -2,12 +2,12 @@
 
 namespace Controllers\Checkout;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 use Views\Renderer;
 use Dao\Productos;
 use Utilities\Site;
 
-class Carrito extends PublicController
+class Carrito extends PrivateController
 {
     public function run(): void
     {

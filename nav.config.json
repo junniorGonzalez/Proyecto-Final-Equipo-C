@@ -26,6 +26,26 @@
       "id":"Menu_PaymentCheckout",
       "nav_url": "index.php?page=Checkout_Carrito",
       "nav_label": "Carretilla de Compra"
+    },
+    {
+      "id":"Menu_Historial",
+      "nav_url": "index.php?page=Checkout_Historial",
+      "nav_label": "Mis Pedidos"
+    },
+    {
+      "id":"Menu_Pedidos",
+      "nav_url": "index.php?page=admin_Pedidos",
+      "nav_label": "Admin: Pedidos"
+    },
+    {
+      "id":"Menu_Productos",
+      "nav_url": "index.php?page=Admin_Productos",
+      "nav_label": "Admin: Productos"
+    },
+    {
+      "id":"Menu_Categorias",
+      "nav_url": "index.php?page=Admin_Categorias",
+      "nav_label": "Admin: Categorías"
     }
   ]
 }

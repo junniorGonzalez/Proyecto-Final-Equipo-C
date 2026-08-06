@@ -2,62 +2,38 @@
 
 namespace Controllers\admin;
 
-use Controllers\PrivateController;
+use Controllers\AdminController;
 use Views\Renderer;
+use Dao\Pedidos as DaoPedidos;
 
-class Pedidos extends PrivateController
+class Pedidos extends AdminController
 {
     public function run(): void
     {
-        if (!isset($_SESSION["orders"]) || !is_array($_SESSION["orders"])) {
-            $_SESSION["orders"] = [];
-        }
-
-        // Actualizar estado
         if ($this->isPostBack()) {
+            $idPedido = intval($_POST["id"] ?? 0);
+            $status = $_POST["status"] ?? "Pendiente";
 
-            $id = $_POST["id"] ?? "";
-            $status = $_POST["status"] ?? "PENDIENTE";
-
-            foreach ($_SESSION["orders"] as $index => $order) {
-
-                if (($order["id"] ?? "") === $id) {
-
-                    $_SESSION["orders"][$index]["status"] = $status;
-                    $_SESSION["orders"][$index]["payment_status"] = $status;
-
-                    break;
-                }
+            if ($idPedido > 0) {
+                DaoPedidos::actualizarEstadoEnvio($idPedido, $status);
             }
         }
 
-        // Los pedidos antiguos que no tengan estado
-        foreach ($_SESSION["orders"] as $index => $order) {
+        $orders = DaoPedidos::getAll();
 
-            if (
-                !isset($_SESSION["orders"][$index]["status"]) ||
-                $_SESSION["orders"][$index]["status"] == ""
-            ) {
+        foreach ($orders as &$order) {
+            $order["cliente"] = trim(($order["cliente_nombre"] ?? "") . " " . ($order["cliente_apellido"] ?? ""));
 
-                $_SESSION["orders"][$index]["status"] = "PENDIENTE";
+            foreach (DaoPedidos::$ESTADOS as $estado) {
+                $key = "selected_" . strtolower(str_replace(" ", "_", $estado));
+                $order[$key] = ($order["estado"] === $estado) ? "selected" : "";
             }
-
-            $_SESSION["orders"][$index]["selected_pendiente"] =
-                ($_SESSION["orders"][$index]["status"] == "PENDIENTE") ? "selected" : "";
-
-            $_SESSION["orders"][$index]["selected_preparando"] =
-                ($_SESSION["orders"][$index]["status"] == "PREPARANDO") ? "selected" : "";
-
-            $_SESSION["orders"][$index]["selected_camino"] =
-                ($_SESSION["orders"][$index]["status"] == "EN CAMINO") ? "selected" : "";
-
-            $_SESSION["orders"][$index]["selected_entregado"] =
-                ($_SESSION["orders"][$index]["status"] == "ENTREGADO") ? "selected" : "";
         }
+        unset($order);
 
         $viewData = [
             "titulo" => "Administración de Pedidos",
-            "orders" => array_reverse($_SESSION["orders"])
+            "orders" => $orders
         ];
 
         Renderer::render("admin/pedidos", $viewData);

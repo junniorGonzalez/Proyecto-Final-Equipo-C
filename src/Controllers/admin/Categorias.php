@@ -2,13 +2,13 @@
 
 namespace Controllers\Admin;
 
-use Controllers\PublicController;
+use Controllers\AdminController;
 use Views\Renderer;
 use Dao\Categorias as DaoCategorias;
 use Dao\Productos as DaoProductos;
 use Utilities\Site;
 
-class Categorias extends PublicController
+class Categorias extends AdminController
 {
     public function run(): void
     {

@@ -2,18 +2,20 @@
 
 namespace Controllers\Checkout;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 use Views\Renderer;
+use Utilities\Security;
+use Dao\Pedidos as DaoPedidos;
 
-class Historial extends PublicController
+class Historial extends PrivateController
 {
     public function run(): void
     {
-        $orders = $_SESSION["orders"] ?? [];
+        $orders = DaoPedidos::getByUsuario(Security::getUserId());
 
         $viewData = [
             "titulo" => "Historial de compras",
-            "orders" => array_reverse($orders)
+            "orders" => $orders
         ];
 
         Renderer::render("checkout/historial", $viewData);

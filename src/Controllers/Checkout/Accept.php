@@ -2,10 +2,11 @@
 
 namespace Controllers\Checkout;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 use Utilities\Context;
+use Dao\Pedidos as DaoPedidos;
 
-class Accept extends PublicController
+class Accept extends PrivateController
 {
     public function run(): void
     {
@@ -15,15 +16,11 @@ class Accept extends PublicController
 
         if ($token !== "" && $token === $session_token) {
             $mode = $_SESSION["paypal_mode"] ?? "demo";
-            $order = $this->findOrderById($session_token);
-
-            //metodo de pago
+            $pedido = DaoPedidos::getByReferencia($session_token);
 
             if ($mode === "demo") {
-                if ($order !== null) {
-                    $order["status"] = "COMPLETADO";
-                    $order["payment_status"] = "APPROVED";
-                    $this->updateOrder($session_token, $order);
+                if ($pedido !== null) {
+                    DaoPedidos::marcarPago($session_token, "Pagado");
                 }
 
                 $result = [
@@ -35,9 +32,9 @@ class Accept extends PublicController
                 ];
                 $dataview["orderjson"] = json_encode($result, JSON_PRETTY_PRINT);
                 $dataview["order_id"] = $session_token;
-                $dataview["total"] = $order["total"] ?? 0;
-                $dataview["items"] = $order["items"] ?? [];
-                $dataview["payment_method"] = $order["payment_method"] ?? "PayPal Sandbox";
+                $dataview["total"] = $pedido["total"] ?? 0;
+                $dataview["items"] = $pedido["items"] ?? [];
+                $dataview["payment_method"] = $pedido["metodo_pago"] ?? "PayPal Sandbox";
             } else {
                 $clientId = trim(Context::getContextByKey("PAYPAL_CLIENT_ID"));
                 $clientSecret = trim(Context::getContextByKey("PAYPAL_CLIENT_SECRET"));
@@ -46,17 +43,16 @@ class Accept extends PublicController
                     $PayPalRestApi = new \Utilities\PayPal\PayPalRestApi($clientId, $clientSecret, "sandbox");
                     $result = $PayPalRestApi->captureOrder($session_token);
 
-                    if ($order !== null) {
-                        $order["status"] = isset($result->status) && $result->status === "COMPLETED" ? "COMPLETADO" : "PENDIENTE";
-                        $order["payment_status"] = isset($result->status) ? $result->status : "PENDING";
-                        $this->updateOrder($session_token, $order);
+                    if ($pedido !== null) {
+                        $estadoPago = (isset($result->status) && $result->status === "COMPLETED") ? "Pagado" : "Rechazado";
+                        DaoPedidos::marcarPago($session_token, $estadoPago);
                     }
 
                     $dataview["orderjson"] = json_encode($result, JSON_PRETTY_PRINT);
                     $dataview["order_id"] = $session_token;
-                    $dataview["total"] = $order["total"] ?? 0;
-                    $dataview["items"] = $order["items"] ?? [];
-                    $dataview["payment_method"] = $order["payment_method"] ?? "PayPal Sandbox";
+                    $dataview["total"] = $pedido["total"] ?? 0;
+                    $dataview["items"] = $pedido["items"] ?? [];
+                    $dataview["payment_method"] = $pedido["metodo_pago"] ?? "PayPal Sandbox";
                 } else {
                     $dataview["orderjson"] = "PayPal no está configurado. Agrega tus credenciales en parameters.env.";
                     $dataview["total"] = 0;
@@ -70,34 +66,5 @@ class Accept extends PublicController
         }
 
         \Views\Renderer::render("paypal/accept", $dataview);
-    }
-
-    private function findOrderById(string $orderId): ?array
-    {
-        if (!isset($_SESSION["orders"]) || !is_array($_SESSION["orders"])) {
-            return null;
-        }
-
-        foreach ($_SESSION["orders"] as $order) {
-            if (($order["id"] ?? "") === $orderId) {
-                return $order;
-            }
-        }
-
-        return null;
-    }
-
-    private function updateOrder(string $orderId, array $orderData): void
-    {
-        if (!isset($_SESSION["orders"]) || !is_array($_SESSION["orders"])) {
-            return;
-        }
-
-        foreach ($_SESSION["orders"] as $index => $order) {
-            if (($order["id"] ?? "") === $orderId) {
-                $_SESSION["orders"][$index] = $orderData;
-                return;
-            }
-        }
     }
 }

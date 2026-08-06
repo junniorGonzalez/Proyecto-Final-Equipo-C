@@ -55,7 +55,8 @@ class Login extends \Controllers\PublicController
                         \Utilities\Security::login(
                             $dbUser["id_usuario"],
                             $dbUser["nombre"],
-                            $dbUser["correo"]
+                            $dbUser["correo"],
+                            $dbUser["id_rol"]
                         );
 
                         if (\Utilities\Context::getContextByKey("redirto") != "") {

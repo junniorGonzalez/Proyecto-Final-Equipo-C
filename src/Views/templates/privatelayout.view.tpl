@@ -32,11 +32,7 @@
         {{foreach NAVIGATION}}
             <li><a href="{{nav_url}}">{{nav_label}}</a></li>
         {{endfor NAVIGATION}}
-        
-        <!-- Módulo de Administración (Tu parte) -->
-        <li><a href="index.php?page=Admin_Productos"><i class="fas fa-boxes"></i>&nbsp;Productos</a></li>
-        <li><a href="index.php?page=Admin_Categorias"><i class="fas fa-tags"></i>&nbsp;Categorías</a></li>
-        
+
         <li><a href="index.php?page=sec_logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Salir</a></li>
       </ul>
     </nav>

@@ -11,7 +11,7 @@
         </h1>
 
         <p style="color:#666;">
-            Desde aquí puedes administrar el estado de todos los pedidos realizados.
+            Desde aquí puedes ver los pedidos de todos los clientes y actualizar el estado de envío.
         </p>
 
     </div>
@@ -31,10 +31,13 @@
 
                 <th style="padding:15px;">Pedido</th>
                 <th>Cliente</th>
+                <th>Dirección de entrega</th>
+                <th>Teléfono</th>
                 <th>Total</th>
                 <th>Fecha</th>
-                <th>Estado Actual</th>
-                <th>Cambiar Estado</th>
+                <th>Pago</th>
+                <th>Estado de envío</th>
+                <th>Cambiar estado</th>
 
             </tr>
 
@@ -47,11 +50,20 @@
         <tr style="border-bottom:1px solid #eee;">
 
             <td style="padding:15px;text-align:center;">
-                {{id}}
+                #{{id_pedido}}
             </td>
 
             <td style="text-align:center;">
-                {{usuario}}
+                {{cliente}}<br>
+                <small style="color:#888;">{{cliente_correo}}</small>
+            </td>
+
+            <td style="text-align:center;max-width:220px;">
+                {{direccion_entrega}}
+            </td>
+
+            <td style="text-align:center;">
+                {{cliente_telefono}}
             </td>
 
             <td style="text-align:center;">
@@ -59,7 +71,11 @@
             </td>
 
             <td style="text-align:center;">
-                {{created_at}}
+                {{fecha}}
+            </td>
+
+            <td style="text-align:center;">
+                {{estado_pago}}
             </td>
 
             <td style="text-align:center;">
@@ -72,7 +88,7 @@
                     font-weight:bold;
                     display:inline-block;">
 
-                    {{status}}
+                    {{estado}}
 
                 </span>
 
@@ -89,7 +105,7 @@
 
                     <input type="hidden"
                            name="id"
-                           value="{{id}}">
+                           value="{{id_pedido}}">
 
                     <select name="status"
                             style="
@@ -100,10 +116,11 @@
                                 color:#24408E;
                                 background:white;">
 
-                       <option value="PENDIENTE" {{selected_pendiente}}>Pendiente</option>
-                        <option value="PREPARANDO" {{selected_preparando}}>Preparando</option>
-                        <option value="EN CAMINO" {{selected_camino}}>En camino</option>
-                        <option value="ENTREGADO" {{selected_entregado}}>Entregado</option>
+                       <option value="Pendiente" {{selected_pendiente}}>Pendiente</option>
+                        <option value="Preparando" {{selected_preparando}}>Preparando</option>
+                        <option value="En camino" {{selected_en_camino}}>En camino</option>
+                        <option value="Entregado" {{selected_entregado}}>Entregado</option>
+                        <option value="Cancelado" {{selected_cancelado}}>Cancelado</option>
 
                     </select>
 

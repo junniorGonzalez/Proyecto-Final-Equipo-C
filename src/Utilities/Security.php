@@ -17,13 +17,14 @@ class Security
         unset($_SESSION["login"]);
     }
 
-    public static function login($userId, $userName, $userEmail)
+    public static function login($userId, $userName, $userEmail, $userRol = null)
     {
         $_SESSION["login"] = array(
             "isLogged" => true,
             "userId" => $userId,
             "userName" => $userName,
-            "userEmail" => $userEmail
+            "userEmail" => $userEmail,
+            "userRol" => $userRol
         );
     }
 
@@ -49,15 +50,41 @@ class Security
         return 0;
     }
 
-    // Todos los usuarios autenticados tendrán acceso.
-    public static function isAuthorized($userId, $function, $type = 'FNC'): bool
+    // id_rol del usuario logueado (1 = Administrador, 2 = Cliente).
+    public static function getUserRol()
     {
-        return self::isLogged();
+        if (isset($_SESSION["login"])) {
+            return $_SESSION["login"]["userRol"] ?? null;
+        }
+        return null;
     }
 
-    // Ya no usamos roles dinámicos del framework.
+    // Solo el rol Administrador (id_rol = 1) tiene acceso administrativo.
+    public static function isAdmin(): bool
+    {
+        return self::isLogged() && intval(self::getUserRol()) === 1;
+    }
+
+    // Menús que solo deben aparecer para el rol Administrador.
+    private static $ADMIN_ONLY_MENUS = ["Menu_Pedidos", "Menu_Productos", "Menu_Categorias"];
+
+    // Todos los usuarios autenticados tendrán acceso a las páginas privadas,
+    // excepto los menús de administración, que exigen el rol Administrador.
+    public static function isAuthorized($userId, $function, $type = 'FNC'): bool
+    {
+        if (!self::isLogged()) {
+            return false;
+        }
+
+        if ($type === 'MNU' && in_array($function, self::$ADMIN_ONLY_MENUS, true)) {
+            return self::isAdmin();
+        }
+
+        return true;
+    }
+
     public static function isInRol($userId, $rol): bool
     {
-        return true;
+        return self::isAdmin();
     }
 }

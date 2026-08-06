@@ -2,12 +2,12 @@
 
 namespace Controllers\Admin;
 
-use Controllers\PublicController;
+use Controllers\AdminController;
 use Views\Renderer;
 use Dao\Productos as DaoProductos;
 use Dao\Categorias as DaoCategorias;
 
-class ProductoForm extends PublicController
+class ProductoForm extends AdminController
 {
     private $mode = "INS";
     private $modeDescriptions = array(

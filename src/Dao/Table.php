@@ -105,6 +105,26 @@ abstract class Table
         return $query->execute();
     }
 
+    protected static function lastInsertId()
+    {
+        return self::getConn()->lastInsertId();
+    }
+
+    protected static function beginTransaction()
+    {
+        return self::getConn()->beginTransaction();
+    }
+
+    protected static function commit()
+    {
+        return self::getConn()->commit();
+    }
+
+    protected static function rollBack()
+    {
+        return self::getConn()->rollBack();
+    }
+
     protected static function _getStructFrom($structure, $data)
     {
         if (is_array($data) && is_array($structure)) {

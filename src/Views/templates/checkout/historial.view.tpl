@@ -6,13 +6,13 @@
     <div style="display:flex; flex-direction:column; gap:12px; margin-top:1.5rem;">
         {{foreach orders}}
         <div style="border:1px solid #ddd; border-radius:10px; padding:16px; background:#f9f9f9;">
-            <h3>Orden #{{id}}</h3>
-            <p><strong>Usuario:</strong> {{usuario}}</p>
-            <p><strong>Método de pago:</strong> {{payment_method}}</p>
-            <p><strong>Estado:</strong> {{status}}</p>
-            <p><strong>Pago:</strong> {{payment_status}}</p>
+            <h3>Pedido #{{id_pedido}}</h3>
+            <p><strong>Dirección de entrega:</strong> {{direccion_entrega}}</p>
+            <p><strong>Método de pago:</strong> {{metodo_pago}}</p>
+            <p><strong>Estado del pago:</strong> {{estado_pago}}</p>
+            <p><strong>Estado del envío:</strong> {{estado}}</p>
             <p><strong>Total:</strong> L. {{total}}</p>
-            <p><strong>Fecha:</strong> {{created_at}}</p>
+            <p><strong>Fecha:</strong> {{fecha}}</p>
             <ul>
                 {{foreach items}}
                 <li>{{nombre}} × {{cantidad}} — L. {{subtotal}}</li>

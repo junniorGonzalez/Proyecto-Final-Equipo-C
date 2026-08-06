@@ -2,12 +2,15 @@
 
 namespace Controllers\Checkout;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 use Views\Renderer;
 use Utilities\Context;
+use Utilities\Security;
 use Utilities\Site;
+use Dao\Pedidos as DaoPedidos;
+use Dao\Usuario as DaoUsuario;
 
-class Pago extends PublicController
+class Pago extends PrivateController
 {
     public function run(): void
     {
@@ -22,15 +25,25 @@ class Pago extends PublicController
             $total += $producto["subtotal"];
         }
 
+        $usuario = DaoUsuario::buscarPorId(Security::getUserId());
+        $direccionEntrega = trim($_POST["direccion_entrega"] ?? ($usuario["direccion"] ?? ""));
+
         $viewData = [
             "titulo" => "Finalizar compra",
             "carrito" => $_SESSION["cart"],
             "total" => $total,
-            "error" => $_SESSION["paypal_error"] ?? ""
+            "error" => $_SESSION["paypal_error"] ?? "",
+            "direccion_entrega" => $direccionEntrega
         ];
 
         if ($this->isPostBack()) {
             unset($_SESSION["paypal_error"]);
+
+            if ($direccionEntrega === "") {
+                $viewData["error"] = "Debes indicar una dirección de entrega para continuar.";
+                Renderer::render("checkout/pago", $viewData);
+                return;
+            }
 
             $clientId = trim(Context::getContextByKey("PAYPAL_CLIENT_ID"));
             $clientSecret = trim(Context::getContextByKey("PAYPAL_CLIENT_SECRET"));
@@ -38,16 +51,8 @@ class Pago extends PublicController
 
             if ($useDemoMode) {
                 $orderId = "demo-" . time();
-                $this->saveOrder([
-                    "id" => $orderId,
-                    "status" => "PENDIENTE",
-                    "payment_status" => "PENDING",
-                    "payment_method" => "PayPal Sandbox",
-                    "total" => round($total, 2),
-                    "items" => $this->buildItemsSummary($_SESSION["cart"]),
-                    "created_at" => date("Y-m-d H:i:s"),
-                    "usuario" => $_SESSION["usuario_nombre"] ?? "Cliente"
-                ]);
+
+                $this->crearPedido($direccionEntrega, $total, $orderId, "PayPal Sandbox");
 
                 $_SESSION["paypal_mode"] = "demo";
                 $_SESSION["paypal_order_id"] = $orderId;
@@ -83,19 +88,11 @@ class Pago extends PublicController
                 return;
             }
 
-            $this->saveOrder([
-                "id" => $response->id,
-                "status" => "PENDIENTE",
-                "payment_status" => "PENDING",
-                "payment_method" => "PayPal Sandbox",
-                "total" => round($total, 2),
-                "items" => $this->buildItemsSummary($_SESSION["cart"]),
-                "created_at" => date("Y-m-d H:i:s"),
-                "usuario" => $_SESSION["usuario_nombre"] ?? "Cliente"
-            ]);
+            $this->crearPedido($direccionEntrega, $total, $response->id, "PayPal Sandbox");
 
             $_SESSION["paypal_order_id"] = $response->id;
             $_SESSION["paypal_mode"] = "live";
+            $_SESSION["cart"] = [];
 
             foreach ($response->links as $link) {
                 if ($link->rel === "approve") {
@@ -112,6 +109,29 @@ class Pago extends PublicController
         Renderer::render("checkout/pago", $viewData);
     }
 
+    private function crearPedido(string $direccionEntrega, float $total, string $referenciaPago, string $metodoPago): void
+    {
+        $items = [];
+
+        foreach ($_SESSION["cart"] as $item) {
+            $items[] = [
+                "id_producto" => (int) $item["prdcod"],
+                "cantidad" => (int) $item["cantidad"],
+                "precio" => round((float) $item["prdcosto"], 2),
+                "subtotal" => round((float) $item["prdcosto"] * (int) $item["cantidad"], 2)
+            ];
+        }
+
+        DaoPedidos::crear(
+            Security::getUserId(),
+            $direccionEntrega,
+            round($total, 2),
+            $items,
+            $metodoPago,
+            $referenciaPago
+        );
+    }
+
     private function buildUrl(string $page): string
     {
         $baseDir = trim(Context::getContextByKey("BASE_DIR"), "/");
@@ -123,30 +143,5 @@ class Pago extends PublicController
         }
 
         return $scheme . "://" . $host . "/index.php?page=" . $page;
-    }
-
-    private function saveOrder(array $orderData): void
-    {
-        if (!isset($_SESSION["orders"]) || !is_array($_SESSION["orders"])) {
-            $_SESSION["orders"] = [];
-        }
-
-        $_SESSION["orders"][] = $orderData;
-    }
-
-    private function buildItemsSummary(array $cart): array
-    {
-        $items = [];
-
-        foreach ($cart as $item) {
-            $items[] = [
-                "nombre" => $item["prddsc"],
-                "cantidad" => (int) ($item["cantidad"] ?? 1),
-                "precio" => round((float) ($item["prdcosto"] ?? 0), 2),
-                "subtotal" => round((float) ($item["prdcosto"] ?? 0) * (int) ($item["cantidad"] ?? 1), 2)
-            ];
-        }
-
-        return $items;
     }
 }

@@ -25,6 +25,10 @@
             <h3>Resumen</h3>
             <p><strong>Total:</strong> L. {{total}}</p>
             <form action="index.php?page=Checkout_Pago" method="post">
+                <label for="direccion_entrega" style="display:block; font-weight:bold; margin-bottom:6px;">Dirección de entrega</label>
+                <textarea id="direccion_entrega" name="direccion_entrega" required rows="3"
+                    style="width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:14px; font-family:inherit;"
+                    placeholder="Calle, colonia, referencias...">{{direccion_entrega}}</textarea>
                 <button type="submit"
                     style="background:#0070ba; color:white; border:none; border-radius:8px; padding:12px 18px; width:100%; font-weight:bold; cursor:pointer;">
                     Pagar con PayPal
